@@ -146,7 +146,7 @@ void loop() {
     }
   }
 
-  // --- Ñecturas reales de sensores ---
+  // --- Lecturas reales de sensores ---
   float tempPrueba = leerTemperatura();
   float vibPrueba  = leerVibracion();
   int riesgoPrueba = porcentaje * 0.8; // Cálculo simple simulado
