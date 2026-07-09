@@ -5,6 +5,7 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <math.h>
+#include "clasificador.h"
 
 // --- DEFINICIÓN DE PANTALLA OLED ---
 #define SCREEN_WIDTH 128
@@ -94,13 +95,21 @@ void setup() {
 }
 
 void loop() {
-  float porcentaje = leerIntensidad();
+  // leer los 3 sensores
+  float temperatura = leerTemperatura();
+  float vibracion   = leerVibracion();
+  float uso         = leerIntensidad();
 
+  // clasificador IA: calcula el risk score y decide el estado
+  float riskScore = calcularRiskScore(temperatura, vibracion, uso);
+  int   estadoIA  = clasificarEstado(temperatura, vibracion, uso);
+  int   riesgoPorcentaje = (int)(riskScore * 100.0);
+
+  // logica de LEDs, buzzer y pantalla segun el estado
   unsigned long tiempoActual = millis();
-  String estadoTexto = ""; // Variable para enviarle el texto a la pantalla
+  String estadoTexto = "";
 
-  // --- LÓGICA DE ESTADOS ---
-  if (porcentaje < 45.0) {
+  if (estadoIA == ESTADO_NORMAL) {
     estadoTexto = "NORMAL";
     digitalWrite(LED_VERDE, HIGH);
     digitalWrite(LED_AMARILLO, LOW);
@@ -108,12 +117,13 @@ void loop() {
     noTone(PIN_BUZZER);
     estadoBuzzerPreventivo = false;
 
-  } else if (porcentaje >= 45.0 && porcentaje < 75.0) {
+  } else if (estadoIA == ESTADO_PREVENTIVO) {
     estadoTexto = "PREVENTIVO";
     digitalWrite(LED_VERDE, LOW);
     digitalWrite(LED_AMARILLO, HIGH);
     digitalWrite(LED_ROJO, LOW);
 
+    // beep intermitente cada 60 segundos
     if (estadoBuzzerPreventivo) {
       if (tiempoActual - tiempoAnteriorPreventivo >= tiempoBeepPreventivo) {
         tiempoAnteriorPreventivo = tiempoActual;
@@ -133,6 +143,7 @@ void loop() {
     digitalWrite(LED_VERDE, LOW);
     digitalWrite(LED_AMARILLO, LOW);
 
+    // alarma rapida: led rojo parpadea y buzzer alterna cada 200ms
     if (tiempoActual - tiempoAnteriorFalla >= intervaloFalla) {
       tiempoAnteriorFalla = tiempoActual;
       estadoAlarmaFalla = !estadoAlarmaFalla;
@@ -146,13 +157,7 @@ void loop() {
     }
   }
 
-  // --- Lecturas reales de sensores ---
-  float tempPrueba = leerTemperatura();
-  float vibPrueba  = leerVibracion();
-  int riesgoPrueba = porcentaje * 0.8; // Cálculo simple simulado
-
-  // Llama a la función que dibuja en la pantalla
-  actualizarPantalla(estadoTexto, porcentaje, tempPrueba, vibPrueba, riesgoPrueba);
+  actualizarPantalla(estadoTexto, uso, temperatura, vibracion, riesgoPorcentaje);
 
   delay(50); // Pequeño retraso para que la pantalla no parpadee demasiado
 }
