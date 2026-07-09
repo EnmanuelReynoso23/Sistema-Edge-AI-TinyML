@@ -9,7 +9,7 @@ def clasificador_estado(temperatura, vibracion, uso):
     elif (50 < temperatura <= 75) or (2 <= vibracion <= 5) or (60 <= uso <= 85):
         return "Posibilidad de sobre calentamiento en el equipo"
     else: 
-        return "Todo esta en orden"
+        return "Todo está en orden"
 
 #variable
 modelo_ia = DecisionTreeClassifier(max_depth=4)
