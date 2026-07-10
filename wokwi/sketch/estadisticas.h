@@ -1,6 +1,8 @@
 #ifndef ESTADISTICAS_H
 #define ESTADISTICAS_H
 
+#include <Arduino.h>
+
 // se imprime el bloque de estadisticas
 const unsigned long INTERVALO_ESTADISTICAS_MS = 30000; // 30 segundos
 

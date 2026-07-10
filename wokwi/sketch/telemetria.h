@@ -1,6 +1,8 @@
 #ifndef TELEMETRIA_H
 #define TELEMETRIA_H
 
+#include <Arduino.h>
+
 // CONFIGURACION 
 // Cada cuanto se envia una linea DATA con las lecturas actuales (ajustable)
 const unsigned long INTERVALO_TELEMETRIA_MS = 5000; // 5 segundos

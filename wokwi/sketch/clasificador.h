@@ -8,6 +8,8 @@
 #ifndef CLASIFICADOR_H
 #define CLASIFICADOR_H
 
+#include <Arduino.h>
+
 // estados del equipo
 enum EstadoEquipo {
     ESTADO_NORMAL      = 0,

@@ -6,6 +6,9 @@
 #include <Adafruit_Sensor.h>
 #include <math.h>
 #include "clasificador.h"
+#include "estadisticas.h"
+#include "alertas.h"
+#include "telemetria.h"
 
 // --- DEFINICIÓN DE PANTALLA OLED ---
 #define SCREEN_WIDTH 128
@@ -92,6 +95,11 @@ void setup() {
     bufUso[i]  = 0.0;
   }
   cntTemp = cntVib = cntUso = FILTER_SIZE;
+
+  // Inicializar modulos de monitoreo serial
+  inicializarEstadisticas();
+  inicializarAlertas();
+  inicializarTelemetria();
 }
 
 void loop() {
@@ -158,6 +166,11 @@ void loop() {
   }
 
   actualizarPantalla(estadoTexto, uso, temperatura, vibracion, riesgoPorcentaje);
+
+  // Actualizar modulos de monitoreo serial
+  actualizarEstadisticas(estadoIA, riskScore);
+  actualizarAlertas(temperatura, vibracion, uso, estadoIA, riskScore);
+  actualizarTelemetria(temperatura, vibracion, uso, estadoIA, riskScore);
 
   delay(50); // Pequeño retraso para que la pantalla no parpadee demasiado
 }

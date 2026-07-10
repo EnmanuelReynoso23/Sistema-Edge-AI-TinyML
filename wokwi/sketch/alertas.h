@@ -1,6 +1,8 @@
 #ifndef ALERTAS_H
 #define ALERTAS_H
 
+#include <Arduino.h>
+
 // ESTADO INTERNO DEL LOG 
 static int           alertEstadoAnterior  = -1; // -1 = aun no hay lectura previa
 static unsigned long alertEntradaEstadoMs = 0;

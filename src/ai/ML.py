@@ -5,6 +5,7 @@ Genera un dataset sintetico, entrena un DecisionTree y evalua su precision.
 
 import random
 import csv
+import os
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
@@ -148,9 +149,11 @@ if __name__ == "__main__":
         pred = modelo.predict([[temp, vib, uso]])[0]
         print(f"  T={temp:.0f} V={vib:.1f} U={uso:.0f} -> score={score:.3f} estado={ESTADOS[estado]}  ({desc})")
 
-    # guardar el dataset en csv
-    print("\nGuardando dataset en CSV...")
-    with open("datos_sensores.csv", "w", newline="", encoding="utf-8") as f:
+    # guardar el dataset en csv (junto al script)
+    dir_script = os.path.dirname(os.path.abspath(__file__))
+    ruta_csv = os.path.join(dir_script, "datos_sensores.csv")
+    print(f"\nGuardando dataset en {ruta_csv}...")
+    with open(ruta_csv, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["Temperatura", "Vibracion", "Uso", "RiskScore", "Estado_Codigo", "Estado_Nombre"])
         for medicion, cod in zip(X, y):
